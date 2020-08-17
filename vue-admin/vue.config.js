@@ -9,20 +9,20 @@ module.exports = {
   /**
    * webpack配置,see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
    **/
-  chainWebpack: config => {},
-  configureWebpack: config => {
+  chainWebpack: (config) => {},
+  configureWebpack: (config) => {
     config.resolve = {
       // 配置解析别名
       extensions: [".js", ".json", ".vue"],
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        'public': path.resolve(__dirname, './public'),
-        'components': path.resolve(__dirname, './src/components'),
-        'common': path.resolve(__dirname, './src/common'),
-        'api': path.resolve(__dirname, './src/api'),
-        'views': path.resolve(__dirname, './src/views'),
-        'data': path.resolve(__dirname, './src/data')
-        }
+        "@": path.resolve(__dirname, "./src"),
+        public: path.resolve(__dirname, "./public"),
+        components: path.resolve(__dirname, "./src/components"),
+        common: path.resolve(__dirname, "./src/common"),
+        api: path.resolve(__dirname, "./src/api"),
+        views: path.resolve(__dirname, "./src/views"),
+        data: path.resolve(__dirname, "./src/data"),
+      },
     };
   },
   // 生产环境是否生成 sourceMap 文件
@@ -37,11 +37,11 @@ module.exports = {
     loaderOptions: {
       // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
       sass: {
-        prependData: `@import "./src/styles/main.scss";`
-      }
+        prependData: `@import "./src/styles/main.scss";`,
+      },
     },
     // 启用 CSS modules for all css / pre-processor files.
-    modules: false
+    modules: false,
   },
   // use thread-loader for babel & TS in production build
   // enabled by default if the machine has more than 1 cores
@@ -58,16 +58,25 @@ module.exports = {
     https: false, // 编译失败时刷新页面
     hot: true, // 开启热加载
     hotOnly: false,
-    proxy: null, // 设置代理
+    proxy: {
+      // 设置代理
+      "/getApi": {
+        target: "http://www.web-jshtml.cn/productapi", //API服务器的地址
+        changeOrigin: true,
+        pathRewrite: {
+          "^/getApi": "", //代理的路径
+        },
+      },
+    },
     overlay: {
       // 全屏模式下是否显示脚本错误
       warnings: true,
-      errors: true
+      errors: true,
     },
-    before: app => {}
+    before: (app) => {},
   },
   /**
    * 第三方插件配置
    */
-  pluginOptions: {}
+  pluginOptions: {},
 };

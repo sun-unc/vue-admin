@@ -5,14 +5,17 @@ import store from "./store";
 //引入element-ui
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import VueCompositionApi from "@vue/composition-api";
 
 // 挂载element-ui
 Vue.use(ElementUI);
+
+Vue.use(VueCompositionApi);
 
 Vue.config.productionTip = false;
 
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
