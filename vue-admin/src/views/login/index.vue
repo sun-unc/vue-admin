@@ -1,96 +1,86 @@
 <template>
   <div id="login">
-    <div class="login-wrap">
-      <ul class="menu-tab">
-        <li
-          v-for="(item, index) in menuTab"
-          :key="item.id"
-          :class="{ 'current-login': currentIndex === index }"
-          @click="toggleTab(index)"
+    <svg-icon class="login_svg" iconClass="login" />
+    <div class="login_form">
+      <div class="login-wrap">
+        <ul class="menu-tab">
+          <li
+            v-for="(item, index) in menuTab"
+            :key="item.id"
+            :class="{ 'current-login': currentIndex === index }"
+            @click="toggleTab(index)"
+          >{{ item }}</li>
+        </ul>
+      </div>
+      <div class="input-tab">
+        <el-form
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          ref="loginForm"
+          label-width="80px"
+          class="login-form"
         >
-          {{ item }}
-        </li>
-      </ul>
-    </div>
-    <div class="input-tab">
-      <el-form
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        ref="loginForm"
-        label-width="80px"
-        class="login-form"
-      >
-        <el-form-item label="邮箱:" prop="username">
-          <el-input
-            type="text"
-            v-model="ruleForm.username"
-            autocomplete="off"
-            size="medium"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="密码:" prop="password">
-          <el-input
-            type="password"
-            v-model="ruleForm.password"
-            autocomplete="off"
-            size="medium"
-            minlength="6"
-            maxlength="20"
-          ></el-input>
-        </el-form-item>
+          <el-form-item label="邮箱:" prop="username">
+            <el-input type="text" v-model="ruleForm.username" autocomplete="off" size="medium"></el-input>
+          </el-form-item>
+          <el-form-item label="密码:" prop="password">
+            <el-input
+              type="password"
+              v-model="ruleForm.password"
+              autocomplete="off"
+              size="medium"
+              minlength="6"
+              maxlength="20"
+            ></el-input>
+          </el-form-item>
 
-        <el-form-item
-          type="password"
-          label="确认密码:"
-          prop="confirm_password"
-          v-if="currentIndex != 0"
-        >
-          <el-input
+          <el-form-item
             type="password"
-            v-model="ruleForm.confirm_password"
-            autocomplete="off"
-            size="medium"
-            minlength="6"
-            maxlength="20"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="验证码:" prop="code">
-          <el-row>
-            <el-col :span="12">
-              <div class="grid-content bg-purple">
-                <el-input
-                  v-model="ruleForm.code"
-                  size="medium"
-                  maxlength="6"
-                ></el-input>
-              </div>
-            </el-col>
-            <el-col :span="4">
-              <div class="grid-content login-yzm">
-                <el-button
-                  type="success"
-                  size="medium"
-                  @click="getSmss()"
-                  :disabled="codeStatus"
-                  >{{ codeText }}</el-button
-                >
-              </div>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            @click="submitForm('loginForm')"
-            size="medium"
-            class="login-submit"
-            :disabled="buttonStatus"
-            >{{ currentIndex === 0 ? "登录" : "注册" }}</el-button
+            label="确认密码:"
+            prop="confirm_password"
+            v-if="currentIndex != 0"
           >
-        </el-form-item>
-      </el-form>
+            <el-input
+              type="password"
+              v-model="ruleForm.confirm_password"
+              autocomplete="off"
+              size="medium"
+              minlength="6"
+              maxlength="20"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item label="验证码:" prop="code">
+            <el-row>
+              <el-col :span="12">
+                <div class="grid-content bg-purple">
+                  <el-input v-model="ruleForm.code" size="medium" maxlength="6"></el-input>
+                </div>
+              </el-col>
+              <el-col :span="4">
+                <div class="grid-content login-yzm">
+                  <el-button
+                    type="success"
+                    size="medium"
+                    @click="getSmss()"
+                    :disabled="codeStatus"
+                  >{{ codeText }}</el-button>
+                </div>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              @click="submitForm('loginForm')"
+              size="medium"
+              class="login-submit"
+              :disabled="buttonStatus"
+            >{{ currentIndex === 0 ? "登录" : "注册" }}</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -101,7 +91,7 @@ import { getSms, regist, login } from "api/login";
 import sha1 from "js-sha1";
 export default {
   name: "Login",
-  setup(props, context) {
+  setup (props, context) {
     // console.log(context, '-------');
     //这里放data数据,生命周期,自定义函数
     var code = (rule, value, callback) => {
@@ -287,16 +277,35 @@ export default {
           password: sha1(ruleForm.password),
           code: ruleForm.code,
         };
-        login(loginData)
+        context.root.$store
+          .dispatch("app/login", loginData)
           .then((res) => {
             context.root.$message({
               message: "登录成功",
               type: "success",
             });
+            // 路由跳转
+            context.root.$router.push({
+              path: "/console",
+            });
           })
           .catch((err) => {
             console.log(err);
           });
+        ;
+        // login(loginData)
+        //   .then((res) => {
+        //     context.root.$message({
+        //       message: "登录成功",
+        //       type: "success",
+        //     });
+        //     // 路由跳转
+        //     context.root.$router.push({
+        //       path: "/console",
+        //     })
+        //   }).catch((err) => {
+        //     console.log(err);
+        //   });
       } else {
         context.root.$message.error("验证码错误");
         return false;
@@ -323,16 +332,23 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 body {
   height: 100vh;
-  overflow: hidden;
   background-color: rgb(40, 41, 40);
+  overflow: hidden;
 }
 #login {
-  margin-top: 100px;
+  width: 70%;
   border: 2px solid rgb(248, 91, 201);
+  margin: 0 auto;
+  margin-top: 150px;
 }
+.login_svg {
+  height: 100%;
+  width: 100%;
+}
+
 .login-wrap {
   width: 330px;
   margin: auto;
